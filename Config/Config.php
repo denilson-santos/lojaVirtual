@@ -1,6 +1,8 @@
 <?php
 namespace Config;
 
+use PDOException;
+
 class Config {
     private $connection;
     private $server;
@@ -20,13 +22,13 @@ class Config {
         if($this->environment == 'development') {
             $this->server = $_ENV['SERVER_LOCAL'];
             $this->dbname = $_ENV['DB_NAME_LOCAL'];
-            $this->user = $_ENV['USER_LOCAL'];
+            $this->user = $_ENV['USER_NAME_LOCAL'];
             $this->password = $_ENV['PASSWORD_LOCAL'];
         } else {
             $this->base_url = $_ENV['BASE_URL'];
             $this->server = $_ENV['SERVER'];
             $this->dbname = $_ENV['DB_NAME'];
-            $this->user = $_ENV['USER'];
+            $this->user = $_ENV['USER_NAME'];
             $this->password = $_ENV['PASSWORD'];
         }
 
@@ -37,9 +39,9 @@ class Config {
             
             return $this->connection;
         }catch(PDOException $error) {
-            // echo "Mensagem de erro: " . $error->getMessage() . "<br>";
-            // echo "Nome do arquivo: ". $error->getFile() . "<br>";
-            // echo "Linha: ". $error->getLine() . "<br>";
+            echo "Mensagem de erro: " . $error->getMessage() . "<br>";
+            echo "Nome do arquivo: ". $error->getFile() . "<br>";
+            echo "Linha: ". $error->getLine() . "<br>";
         }
     }
 

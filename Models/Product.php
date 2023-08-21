@@ -20,8 +20,8 @@ class Product extends Model {
         $where = $this->buildWhere($filters, 'none');     
 
         $stm = $this->db->prepare(
-            'SELECT product.*, brand.name as brand_name FROM product
-            JOIN brand ON brand_id = id_brand WHERE '.implode(" AND ", $where).' '.$orderByRandom.' LIMIT :offset, :limit');
+            'SELECT products.*, brands.name as brand_name from products
+            JOIN brands ON brand_id = brands.id WHERE '.implode(" AND ", $where).' '.$orderByRandom.' LIMIT :offset, :limit');
         // print_r($stm); exit;
         $this->bindWhere($filters, $stm, 'none');
         $stm->bindValue(':offset', $offset, \PDO::PARAM_INT);
@@ -32,7 +32,7 @@ class Product extends Model {
             $data = $stm->fetchAll(\PDO::FETCH_ASSOC);
 
             foreach ($data as $key => $item) {
-                $data[$key]['images'] = $this->getImagesByProductId($item['id_product']);
+                $data[$key]['images'] = $this->getImagesByProductId($item['id']);
             }
         }
 
@@ -44,7 +44,7 @@ class Product extends Model {
         $where = $this->buildWhere($filters, 'brand');
 
         $stm = $this->db->prepare(
-            'SELECT brand_id, COUNT(*) AS total_products_by_brand FROM product WHERE '.implode(" AND ", $where).' GROUP BY brand_id');
+            'SELECT brand_id, COUNT(*) AS total_products_by_brand from products WHERE '.implode(" AND ", $where).' GROUP BY brand_id');
 
         $this->bindWhere($filters, $stm, 'brand');
         $stm->execute();
@@ -61,7 +61,7 @@ class Product extends Model {
         $where = $this->buildWhere($filters, 'rating');
 
         $stm = $this->db->prepare(
-            'SELECT rating, COUNT(*) AS total_ratings_by_star FROM product WHERE '.implode(" AND ", $where).' GROUP BY rating');
+            'SELECT rating, COUNT(*) AS total_ratings_by_star from products WHERE '.implode(" AND ", $where).' GROUP BY rating');
             
         $this->bindWhere($filters, $stm, 'rating');
         $stm->execute();
@@ -76,7 +76,7 @@ class Product extends Model {
     public function getPromotionCount($filters = []) {
         $where = $this->buildWhere($filters, 'promotion');
         $stm = $this->db->prepare(
-            'SELECT COUNT(*) AS total_promotion FROM product WHERE '.implode(" AND ", $where));
+            'SELECT COUNT(*) AS total_promotion from products WHERE '.implode(" AND ", $where));
         $this->bindWhere($filters, $stm, 'promotion');
         // print_r($stm); exit;
         $stm->execute();
@@ -92,7 +92,7 @@ class Product extends Model {
         $data = [];
 
         $stm = $this->db->prepare(
-            'SELECT url FROM product_image WHERE product_id = :id_product');
+            'SELECT url FROM products_images WHERE product_id = :id_product');
         $stm->bindValue(':id_product', $id);
         $stm->execute();
 
@@ -111,7 +111,7 @@ class Product extends Model {
         $where = $this->buildWhere($filters, 'none');
 
         $stm = $this->db->prepare(
-            'SELECT id_product, options FROM product WHERE '.implode(" AND ", $where));
+            'SELECT id, options from products WHERE '.implode(" AND ", $where));
 
         $this->bindWhere($filters, $stm, 'none');
         $stm->execute();
@@ -121,7 +121,7 @@ class Product extends Model {
 
             foreach ($products as $product) {
                 $optionsByProduct = explode(',', $product['options']);
-                $idsProducts[] = $product['id_product'];
+                $idsProducts[] = $product['id'];
 
                 foreach ($optionsByProduct as $option) {
                     if (!in_array($option, $options)) {
@@ -149,7 +149,7 @@ class Product extends Model {
             $where[] = 'option_id IN('.$inOptions.') AND product_id IN('.$inIdProducts.')';
         }
 
-        $stm = $this->db->prepare('SELECT value, option_id, COUNT(*) AS amount_by_value FROM product_option WHERE '.implode(' AND ', $where).' GROUP BY value ORDER BY option_id');
+        $stm = $this->db->prepare('SELECT value, option_id, COUNT(*) AS amount_by_value FROM products_options WHERE '.implode(' AND ', $where).' GROUP BY value, option_id ORDER BY option_id');
 
         // values para cada param do in
         if (!empty($options)) {
@@ -183,7 +183,7 @@ class Product extends Model {
         $where = $this->buildWhere($filters, '');
 
         $stm = $this->db->prepare(
-            'SELECT COUNT(*) AS total_product FROM product WHERE '.implode(' AND ', $where));
+            'SELECT COUNT(*) AS total_product from products WHERE '.implode(' AND ', $where));
 
         $this->bindWhere($filters, $stm, '');
         $stm->execute();
@@ -199,8 +199,8 @@ class Product extends Model {
 
         $stm = $this->db->prepare(
             'SELECT MAX(promo_price) AS max_promo_price, 
-            (SELECT MAX(price) FROM product WHERE promo = 0 ) 
-            AS max_price FROM product');
+            (SELECT MAX(price) from products WHERE promo = 0 ) 
+            AS max_price from products');
 
         $stm->execute();
         
@@ -240,7 +240,7 @@ class Product extends Model {
                 }
             }
 
-            $where[] = 'rating IN(SELECT rating FROM product WHERE '.implode(' OR ', $whereRating).')';
+            $where[] = 'rating IN(SELECT rating from products WHERE '.implode(' OR ', $whereRating).')';
         }
 
         if (!empty($filters['promotion']) || $filtersRemoved == 'promotion') {
@@ -254,11 +254,11 @@ class Product extends Model {
         if (!empty($filters['option']) && $filtersRemoved != 'option') {
             $inParams = $this->buildIN($filters['option'], 'option');
 
-            $where[] = 'id_product IN(SELECT product_id FROM product_option WHERE product_option.value IN ('.$inParams.'))';
+            $where[] = 'id IN(SELECT product_id FROM products_options WHERE products_options.value IN ('.$inParams.'))';
         }
 
         if(!empty($filters['searchTerm'])) {
-            $where[] = 'product.name LIKE :searchTerm';
+            $where[] = 'products.name LIKE :searchTerm';
         }
 
         if (isset($filters['rangePrice0']) || isset($filters['rangePrice1'])) {

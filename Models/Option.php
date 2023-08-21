@@ -5,7 +5,7 @@ use Core\Model;
 
 class Option extends Model {
     public function getOptionName($id) {
-        $stm = $this->db->prepare('SELECT name FROM `option` WHERE id_option = :id_option');
+        $stm = $this->db->prepare('SELECT name FROM `options` WHERE id = :id_option');
         $stm->bindValue(':id_option', $id);
         $stm->execute();
 

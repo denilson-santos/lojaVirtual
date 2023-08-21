@@ -7,7 +7,7 @@ class Brand extends Model {
     public function getListBrands() {
         $data = [];
 
-        $stm = $this->db->query('SELECT * FROM brand');
+        $stm = $this->db->query('SELECT * FROM brands');
 
         if($stm->rowCount() > 0) {
             $data = $stm->fetchAll(\PDO::FETCH_ASSOC);
@@ -20,7 +20,7 @@ class Brand extends Model {
     public function getBrandNameById($id) {
         $data = [];
 
-        $stm = $this->db->prepare('SELECT name FROM brand WHERE id_brand = :brand_id');
+        $stm = $this->db->prepare('SELECT name FROM brands WHERE id = :brand_id');
         $stm->bindValue(':brand_id', $id);
         $stm->execute();
 
