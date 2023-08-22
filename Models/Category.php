@@ -6,12 +6,12 @@ use Core\Model;
 class Category extends Model {
     public function getListCategories() {
         $data = [];
-        $stm = $this->db->query('SELECT * FROM category ORDER BY super_category DESC');
+        $stm = $this->db->query('SELECT * FROM categories ORDER BY super_category DESC');
         
         if ($stm->rowCount() > 0) {
             foreach ($stm->fetchAll(\PDO::FETCH_ASSOC) as $item) {
                 $item['subs_category'] = [];
-                $data[$item['id_category']] = $item;
+                $data[$item['id']] = $item;
             }
 
             while ($this->stillNeed($data)) {
@@ -23,7 +23,7 @@ class Category extends Model {
     }
 
     public function getCategoryName($id) {
-        $stm = $this->db->prepare('SELECT name FROM category WHERE id_category = :id_categorie');
+        $stm = $this->db->prepare('SELECT name FROM categories WHERE id = :id_categorie');
         $stm->bindValue(':id_categorie', $id);
         $stm->execute();
 
@@ -41,7 +41,7 @@ class Category extends Model {
 
         if (!empty($id) ) {
             while($haveSuperCategory) {
-                $stm = $this->db->prepare('SELECT * FROM category WHERE id_category = :id_category');
+                $stm = $this->db->prepare('SELECT * FROM categories WHERE id = :id_category');
                 $stm->bindValue(':id_category', $id);
                 $stm->execute();
 
@@ -81,7 +81,7 @@ class Category extends Model {
         foreach ($data as $id => $item) {
             // Por enquanto vou deixar assim, modificar no futuro. Define a sub_category correta a determinata super_category, $data é uma matriz onde o primeiro indice é a super categoria e o segundo indice está dentro de subs_category
             if (!empty($data[$item['super_category']])) {
-                $data[$item['super_category']]['subs_category'][$item['id_category']] = $item;
+                $data[$item['super_category']]['subs_category'][$item['id']] = $item;
                 unset($data[$id]);
                 break;
             }

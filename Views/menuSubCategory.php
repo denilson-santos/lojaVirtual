@@ -8,13 +8,13 @@ foreach ($subs as $sub) {
 
     if ($to == 'menu') {
         echo "
-        <li><a href='".BASE_URL."category/enter/".$sub['id_category']."'>$spaceCaractere ".$sub['name']."</a></li>
+        <li><a href='".BASE_URL."category/enter/".$sub['id']."'>$spaceCaractere ".$sub['name']."</a></li>
         ";
     } else if ($to == 'search') {
-        $selected = (!empty($viewData['category']) && $category == $sub['id_category']? 'selected="selected"' : '');
+        $selected = (!empty($viewData['category']) && $category == $sub['id']? 'selected="selected"' : '');
 
         echo "
-        <option $selected value='".$sub['id_category']."'>$spaceCaractere ".$sub['name']."</option>
+        <option $selected value='".$sub['id']."'>$spaceCaractere ".$sub['name']."</option>
         ";
     }
 

@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row" style="margin-top: 35px;">
 <?php
 $count = 0;
 
@@ -11,7 +11,7 @@ foreach ($products as $product) {
 
     if ($count >= 2) {
         $count = 0;
-        echo '</div><div class="row">';
+        echo '</div><div class="row" style="margin-top: 35px;">';
     } else {
         $count++;
     }

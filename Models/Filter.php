@@ -35,7 +35,7 @@ class Filter extends Model {
             $data['brands'][$key]['count'] = 0; // para evitar erros quando uma marca n tiver produtos
 
             foreach ($data['productsByBrands'] as $productsByBrand) {
-                if($productsByBrand['brand_id'] == $brand['id_brand']) {
+                if($productsByBrand['brand_id'] == $brand['id']) {
                     $data['brands'][$key]['count'] = $productsByBrand['total_products_by_brand'];
                 }
             }
