@@ -49,10 +49,10 @@
 									<option value=""><?php $this->language->get('ALLCATEGORIES'); ?></option>
 									<?php 
 									foreach ($viewData['categories'] as $category) {
-										$selected = (!empty($viewData['category']) && $viewData['category'] == $category['id_category']? 'selected="selected"' : '');
+										$selected = (!empty($viewData['category']) && $viewData['category'] == $category['id']? 'selected="selected"' : '');
 
 										echo "
-											<option $selected value='".$category['id_category']."'>".$category['name']."</option>
+											<option $selected value='".$category['id']."'>".$category['name']."</option>
 										";
 
 										if (count($category['subs_category']) > 0) {
@@ -86,7 +86,7 @@
 				</div>
 			</div>
 		</header>
-		<div class="categoryarea">
+		<!-- <div class="categoryarea">
 			<nav class="navbar">
 				<div class="container">
 					<ul class="nav navbar-nav">
@@ -97,7 +97,7 @@
 							  <?php 
 							 	foreach ($viewData['categories'] as $category) {
 									echo "
-										<li><a href='".BASE_URL."category/enter/".$category['id_category']."'>".$category['name']."</a></li>
+										<li><a href='".BASE_URL."category/enter/".$category['id']."'>".$category['name']."</a></li>
 									";
 
 									if (count($category['subs_category']) > 0) {
@@ -115,7 +115,7 @@
 							if (!empty($viewData['categoryFilter'])) {
 								foreach ($viewData['categoryFilter'] as $item) {
 									echo "
-										<li><a href='".BASE_URL."category/enter/".$item['id_category']."'>".$item['name']."</a></li>
+										<li><a href='".BASE_URL."category/enter/".$item['id']."'>".$item['name']."</a></li>
 									";
 								}
 							}
@@ -123,14 +123,19 @@
 					</ul>
 				</div>
 			</nav>
-		</div>
+		</div> -->
+		<br>
+		<br>
 		<section>
 			<div class="container">
 				<div class="row">
-				  <div class="col-sm-3">
-				  	<aside>
-				  		<h1><?php $this->language->get('FILTERBY'); ?>:</h1>
-				  		<div class="filterArea">
+					<div class="col-sm-9">
+						<?php $this->loadViewInTemplate($viewName, $viewData); ?>
+				  </div>
+					<div class="col-sm-3">
+						<aside>
+							<h1><?php $this->language->get('FILTERBY'); ?>:</h1>
+							<div class="filterArea">
 							<form method="GET">
 								<input type="hidden" name="term" value="<?php echo (!empty($viewData['searchTerm']) ? $viewData['searchTerm'] : '') ?>">
 								<input type="hidden" name="category" value="<?php echo (!empty($viewData['category']) ? $viewData['category'] : '') ?>">
@@ -140,7 +145,7 @@
 									<div class="filter-content">
 										<?php
 											foreach ($viewData['filters']['brands'] as $brand) {
-												$checked = (!empty($viewData['filtersSelected']['brand']) && in_array($brand['id_brand'], $viewData['filtersSelected']['brand']))? 'checked="checked"' : '';
+												$checked = (!empty($viewData['filtersSelected']['brand']) && in_array($brand['id'], $viewData['filtersSelected']['brand']))? 'checked="checked"' : '';
 
 												$noneItem = (empty($brand['count']) ? 'none-item' : '');
 
@@ -149,7 +154,7 @@
 													
 													<div class='pull-left'>
 														<label class='form-check-label'>
-															<input type='checkbox' class='form-check-input' name='filters[brand][]' id='box-brand' value='".$brand['id_brand']."' $checked>".$brand['name']."
+															<input type='checkbox' class='form-check-input' name='filters[brand][]' id='box-brand' value='".$brand['id']."' $checked>".$brand['name']."
 														</label>
 													</div>
 													<div class='pull-right $noneItem'>(".$brand['count'].")
@@ -271,19 +276,16 @@
 								</div>
 
 							</form>
-				  		</div>
+							</div>
 
-				  		<div class="widget">
-				  			<h1><?php $this->language->get('FEATUREDPRODUCTS'); ?></h1>
-				  			<div class="widget_body">
+							<div class="widget">
+								<h1><?php $this->language->get('FEATUREDPRODUCTS'); ?></h1>
+								<div class="widget_body">
 								<?php $this->loadView('widgetItem', ['listWidgets' => $viewData['sidebarWidgetsFeatured']]) ?>
-				  			</div>
-				  		</div>
-				  	</aside>
-				  </div>
-				  <div class="col-sm-9">
-					  <?php $this->loadViewInTemplate($viewName, $viewData); ?>
-				  </div>
+								</div>
+							</div>
+						</aside>
+					</div>
 				</div>
 	    	</div>
 	    </section>
